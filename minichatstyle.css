@@ -1,0 +1,11 @@
+body {
+    width: 50%;
+}
+
+.lastId {
+    display: none;
+}
+
+.pseudo {
+    font-weight: bold;
+}
