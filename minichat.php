@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>minichat</title>
-        <meta charset=utf-8" />
+        <meta charset="utf-8" />
         <link rel="stylesheet" type="text/css" href="minichatstyle.css">
         <script src="minichat.js"></script>
     </head>
