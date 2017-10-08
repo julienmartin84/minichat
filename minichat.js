@@ -18,23 +18,6 @@ function getCookie(cname) {
     return "";
 }
 
-function setCookie(cname, cvalue, days) {
-    var d = new Date();
-    d.setTime(d.getTime() + (days*24*60*60*1000));
-    var expires = "expires="+ d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-}
-
-function checkCookie() {
-    var pseudo = getCookie("pseudo");
-    if (pseudo !== "") {
-        document.getElementById("pseudo").value = pseudo;
-        document.getElementById("message").focus();
-    } else {
-        document.getElementById("pseudo").focus();
-    }
-}
-
 function checkMsgLength() {
     var msgLength = document.getElementById("message").value.length;
     var charLeft = 255 - msgLength;
@@ -70,6 +53,10 @@ function updateMessages(data) {
         serverAnswer.messages.forEach( function (message) {
             document.getElementById("messages").innerHTML = document.getElementById("messages").innerHTML + message;
         });
+        var scrollableDiv = document.getElementById('messages');
+        $('#messages').animate({
+            scrollTop: scrollableDiv.scrollHeight - scrollableDiv.clientHeight
+        }, 500);
     }
 }
 
@@ -116,10 +103,12 @@ function ajaxPost(url, data, callback) {
 }
 
 function postMessage() {
-    setCookie("pseudo", document.getElementById("pseudo").value, 3);
+    document.getElementById('infoMessage').textContent = '';
     document.getElementById("sendButton").setAttribute("disabled", true);
     var form = document.getElementById("form");
     var data = new FormData(form);
+    data.append("pseudo", getCookie('pseudo'));
+
     ajaxPost("minichat_post.php", data, function(){});
     document.getElementById("message").value = "";
     document.getElementById("message").focus();
@@ -127,8 +116,9 @@ function postMessage() {
 }
 
 window.onload = function() {
+    document.getElementById('message').focus();
+    document.getElementById('welcomeMessage').textContent = 'Bienvenue '+getCookie('pseudo')+'.';
     getMessages();
-    checkCookie();
     document.getElementById("message").addEventListener("keyup", checkMsgLength);
     document.getElementById("sendButton").addEventListener("click", postMessage);
     refreshId = setInterval(getMessages, 3000);

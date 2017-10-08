@@ -6,31 +6,30 @@
         <link rel="icon" type="image/png" href="images/logo.png" />
         <link rel="stylesheet" type="text/css" href="minichatstyle.css">
         <script src="minichat.js"></script>
+        <script src="jquery-3.2.1.min.js"></script>
     </head>
 
     <body>
 
-    <form id="form">
-        <table>
-            <tr>
-                <td><label for="pseudo">pseudo : </label> </td>
-                <td><input type="text" id="pseudo" name="pseudo" /></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><label for="message">message : </label></td>
-                <td><input type="text" id="message" name="message" /></td>
-                <td><span id="infoMessage"></span></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td><input type="button" id="sendButton" value="Envoyer" /></td>
-                <td></td>
-            </tr>
-        </table>
-    </form>
+    <?php
 
-    <div id="messages"></div>
+    if (!isset($_COOKIE['pseudo'])) {
+        header('Location: login.php');
+    }
+    ?>
+
+    <p id="welcomeMessage"></p>
+
+    <div id="conteneur">
+        <div id="messages"></div>
+    </div>
+
+    <form id="form">
+        <textarea id="message" name="message" title="Write your message here"></textarea>
+        <br />
+        <input type="button" id="sendButton" value="Envoyer" />
+        <span id="infoMessage"></span>
+    </form>
 
     </body>
 
