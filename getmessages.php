@@ -1,5 +1,10 @@
 <?php
 
+header('Content-Type: application/json');
+
+$jsonMessages = new stdClass();
+$messages = [];
+
 //recuperation de lastId
 if ( isset($_GET['lastId']) ) {
     $lastId = htmlspecialchars($_GET['lastId']);
@@ -16,24 +21,23 @@ try {
 }
 
 if ($lastId == -1) {
-    $requete = $bdd->query('select id, pseudo, message from minichat order by id desc');
-    $maxId = 0;
+    $requete = $bdd->query('select id, pseudo, message from minichat order by id');
+    $jsonMessages->maxId = 0;
 } else {
-    $requete = $bdd->prepare('select id, pseudo, message from minichat where id > ? order by id desc');
+    $requete = $bdd->prepare('select id, pseudo, message from minichat where id > ? order by id');
     $requete->execute(array($lastId));
-    $maxId = $lastId;
+    $jsonMessages->maxId = $lastId;
 }
 
 while ($data=$requete->fetch()) {
-    if ($data['id'] > $maxId) {
-        $maxId = $data['id'];
+    if ($data['id'] > $jsonMessages->maxId) {
+        $jsonMessages->maxId = $data['id'];
     }
-    echo '<span class="pseudo">' . htmlspecialchars($data['pseudo']) . ' : </span>' . htmlspecialchars($data['message']) . '<br />';
+    $messages[] = '<span class="pseudo">' . htmlspecialchars($data['pseudo']) . ' : </span>' . htmlspecialchars($data['message']) . '<br />';
 }
 $requete->closeCursor();
+$jsonMessages->messages = $messages;
 
-if ($maxId > $lastId) {
-    echo '<p class="lastId">' . htmlspecialchars($maxId) . '</p>';
-}
+echo json_encode($jsonMessages);
 
 ?>

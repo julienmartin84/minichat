@@ -3,6 +3,7 @@
     <head>
         <title>minichat</title>
         <meta charset="utf-8" />
+        <link rel="icon" type="image/png" href="images/logo.png" />
         <link rel="stylesheet" type="text/css" href="minichatstyle.css">
         <script src="minichat.js"></script>
     </head>
@@ -24,6 +25,7 @@
             <tr>
                 <td></td>
                 <td><input type="button" id="sendButton" value="Envoyer" /></td>
+                <td></td>
             </tr>
         </table>
     </form>

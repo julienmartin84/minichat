@@ -1,5 +1,6 @@
 var isMsgLengthValid = true;
 var refreshId;
+var lastId = null;
 
 function getCookie(cname) {
     var name = cname + "=";
@@ -61,24 +62,40 @@ function checkMsgLength() {
     }
 }
 
+function updateMessages(data) {
+    var serverAnswer = JSON.parse(data);
+    if (lastId === serverAnswer.maxId) {
+    } else {
+        lastId = serverAnswer.maxId;
+        serverAnswer.messages.forEach( function (message) {
+            document.getElementById("messages").innerHTML = document.getElementById("messages").innerHTML + message;
+        });
+    }
+}
+
 function getMessages() {
-    if (window.XMLHttpRequest) {
-        xmlhttp = new XMLHttpRequest(); // code for IE7+, Firefox, Chrome, Opera, Safari
-    } else {
-        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP"); // code for IE6, IE5
-    }
-    xmlhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) {
-            document.getElementById("messages").innerHTML = this.responseText + document.getElementById("messages").innerHTML;
-        }
-    };
-    var lastId = document.querySelector(".lastId");
     if (lastId === null) {
-        xmlhttp.open("GET","getmessages.php",true);
+        ajaxGet('getMessages.php', updateMessages);
     } else {
-        xmlhttp.open("GET", "getmessages.php?lastId="+lastId.textContent, true);
+        ajaxGet('getMessages.php?lastId='+lastId, updateMessages);
     }
-    xmlhttp.send();
+}
+
+function ajaxGet(url, callback) {
+    var req = new XMLHttpRequest();
+    req.open("GET", url);
+    req.addEventListener("load", function () {
+        if (req.status >= 200 && req.status < 400) {
+            // Appelle la fonction callback en lui passant la réponse de la requête
+            callback(req.responseText);
+        } else {
+            console.error(req.status + " " + req.statusText + " " + url);
+        }
+    });
+    req.addEventListener("error", function () {
+        console.error("Erreur réseau avec l'URL " + url);
+    });
+    req.send(null);
 }
 
 function ajaxPost(url, data, callback) {
